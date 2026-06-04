@@ -5,6 +5,7 @@ zellbytes internship work
 
 
 
+
 \#mushroom-yield-project -day1
 
 \# Mushroom Yield Project
@@ -37,7 +38,7 @@ zellbytes internship work
 
 &#x20;  python src\\smoke\_test.py
 
-&#x20;  
+&#x20;
 
 \## Project Overview-day2
 
@@ -58,4 +59,17 @@ This project predicts mushroom yield using Python and machine learning.
 \- outputs
 
 \- src
+
+
+\## Project overview ## -day3
+
+
+
+loaded ingest.py file into src
+
+ The objective of ingest.py in a data project is usually to load raw data and prepare it for further processing.
+
+&#x20;
+
+&#x20;ingest.py load the raw polyhouse sensor CSV, perform initial validation/conversion, and save it in a structured format (Parquet) for  downstream data processing and machine learning tasks.
 
