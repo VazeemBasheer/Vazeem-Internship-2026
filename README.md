@@ -39,3 +39,23 @@ zellbytes internship work
 
 &#x20;  
 
+\## Project Overview
+
+
+
+This project predicts mushroom yield using Python and machine learning.
+
+
+
+\## Folder Structure
+
+
+
+\- data/raw
+
+\- models
+
+\- outputs
+
+\- src
+
