@@ -100,3 +100,40 @@ Purpose:
 ## Conclusion
 
 The EDA process successfully generated descriptive statistics, variability measures, distribution insights, correlation analysis, and visualizations. These outputs provide a foundation for feature selection, predictive modeling, and further analysis of mushroom yield in controlled polyhouse environments.
+
+### Correlation Findings
+
+The Pearson correlation matrix was computed for temperature, humidity, CO₂ concentration, and mushroom yield.
+
+#### Strongest Positive Correlation
+
+- **temperature_c ↔ yield_kg:** **r = 0.524**
+- This indicates a moderate positive relationship between temperature and mushroom yield.
+- Within the observed operating range, higher temperatures were generally associated with higher yield.
+
+#### Second Strongest Positive Correlation
+
+- **humidity_pct ↔ yield_kg:** **r = 0.242**
+- This indicates a weak positive relationship between humidity and yield.
+- Higher humidity levels were associated with slightly higher yield.
+
+#### Strongest Negative Correlation
+
+- **co2_ppm ↔ yield_kg:** **r = -0.260**
+- This indicates a weak negative relationship between CO₂ concentration and yield.
+- Higher CO₂ values were associated with slightly lower yield in this dataset.
+
+#### Relationships Among Sensor Variables
+
+- temperature_c ↔ humidity_pct: r = -0.022
+- temperature_c ↔ co2_ppm: r = 0.007
+- humidity_pct ↔ co2_ppm: r = -0.018
+
+These values are close to zero, indicating little to no linear relationship among the sensor measurements themselves.
+
+### Caveats
+
+- Correlation measures association, not causation.
+- The observed relationships do not prove that changes in a sensor variable directly cause changes in mushroom yield.
+- Results are based on the available dataset and observed operating conditions.
+- Additional experiments and predictive modeling would be required to establish causal effects.
