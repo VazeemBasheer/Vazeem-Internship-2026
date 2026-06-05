@@ -216,24 +216,106 @@ The objective of this script is to perform an exploratory assessment of the clea
 7\. Saves the report as:
 
 
-
-```text
-
 reports/data\_quality.md
-
-```
-
 
 
 \### Output
 
-
-
 The generated report provides a concise overview of data quality and feature distributions, helping validate the dataset before feature engineering, visualization, and machine learning model development.
 
 
+## Exploratory Data Analysis (EDA) ## -day6
+
+### Objective
+
+Analyze the cleaned polyhouse sensor dataset to understand data distributions, variability, and relationships between environmental conditions and mushroom yield.
+
+### Steps Performed
+
+#### 1. Generated Summary Statistics
+
+Computed descriptive statistics for:
+
+* temperature_c
+* humidity_pct
+* co2_ppm
+* yield_kg
+
+Metrics generated:
+
+* Count
+* Mean
+* Standard Deviation
+* Minimum
+* 25th Percentile
+* Median
+* 75th Percentile
+* Maximum
+
+#### 2. Calculated Coefficient of Variation (CV)
+
+Calculated:
 
 
+CV = Standard Deviation / Mean
 
 
+Purpose:
+
+* Compare variability across different sensor measurements.
+* Identify features with higher relative dispersion.
+
+#### 3. Analyzed Feature Distributions
+
+Compared mean and median values for each feature to determine distribution shape:
+
+* Mean > Median → Right-skewed
+* Mean < Median → Left-skewed
+* Mean ≈ Median → Approximately symmetric
+
+#### 4. Generated Correlation Matrix
+
+Computed the Pearson correlation matrix for:
+
+* temperature_c
+* humidity_pct
+* co2_ppm
+* yield_kg
+
+Outputs:
+
+reports/correlation_matrix.csv
+reports/correlation_matrix.md
+
+Purpose:
+
+* Measure linear relationships between environmental variables and mushroom yield.
+
+#### 5. Created Correlation Heatmap
+
+Generated a heatmap visualization from the correlation matrix.
+
+Output:
+
+reports/figures/corr_heatmap.png
+
+Purpose:
+
+* Visualize positive and negative correlations among features.
+
+#### 6. Created Scatter Plots
+
+Generated scatter plots to examine relationships between yield and environmental conditions:
+
+* Humidity (%) vs Yield (kg)
+* Temperature (°C) vs Yield (kg)
+* CO₂ (ppm) vs Yield (kg)
+
+Output:
+
+reports/figures/scatter_yield.png
+
+Purpose:
+
+* Identify trends, patterns, and potential outliers.
 
