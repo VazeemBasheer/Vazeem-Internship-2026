@@ -465,3 +465,146 @@ The following checks are performed after feature engineering:
 ## Future Improvement
 
 For learning purposes, the scaler is currently fitted on the full cleaned dataset.
+
+ ##chronological Train/Test Split and Feature Scaling## --day8
+
+## Objective
+
+Prepare the cleaned polyhouse sensor dataset for machine learning by:
+
+* Sorting records chronologically
+* Creating an 80/20 train-test split
+* Preventing data leakage
+* Scaling features using MinMaxScaler
+* Saving processed datasets and scaler artifacts for future modeling
+
+## Input Dataset
+
+Source file:
+
+data/interim/02_cleaned.parquet
+
+Columns used:
+
+ timestamp     Observation date             
+ temperature_c   Temperature in °C            
+ humidity_pct  Relative humidity (%)        
+ co2_ppm       CO₂ concentration (ppm)      
+ yield_kg      Crop yield (target variable) 
+
+## Methodology
+
+### 1. Chronological Sorting
+
+The dataset is sorted by the `timestamp` column before splitting.
+
+df = pd.read_parquet(...).sort_values("timestamp")
+
+This ensures observations remain in time order and future information is not introduced into training data.
+
+### 2. Train/Test Split
+
+An 80/20 chronological split is applied.
+
+split_idx = int(len(df) * 0.8)
+
+train = df.iloc[:split_idx]
+test = df.iloc[split_idx:]
+
+
+For a dataset containing 365 rows:
+
+Dataset  Rows 
+ Train       292  
+ Test          73   
+
+
+### 3. Leakage Verification
+
+The earliest test date must occur after the latest training date.
+
+assert test_start_date > train_end_date
+
+This validation confirms that no future observations are included in the training set.
+
+### 4. Feature Selection
+
+Input features:
+
+temperature_c
+humidity_pct
+co2_ppm
+
+Target variable:
+
+yield_kg
+
+
+### 5. Feature Scaling
+
+A MinMaxScaler is fitted only on training data.
+
+scaler.fit(train_features)
+
+Transformation formula:
+
+x_scaled = (x - x_min) / (x_max - x_min)
+
+The fitted scaler is then applied to both train and test datasets.
+
+X_train = scaler.fit_transform(train_features)
+X_test = scaler.transform(test_features)
+
+This prevents information from the test set influencing the scaling process.
+
+## Generated Outputs
+
+### Training and Test Datasets
+
+data/processed/train.csv
+data/processed/test.csv
+
+### Feature Arrays
+
+data/processed/X_train.npy
+data/processed/X_test.npy
+
+### Target Arrays
+
+data/processed/y_train.npy
+data/processed/y_test.npy
+
+### Trained Scaler
+
+models/minmax_scaler_train.joblib
+
+## Split Summary
+
+Example output:
+
+Total rows : 365
+
+Train rows : 292
+Test rows  : 73
+
+Train Period :
+2024-01-01 → 2024-10-18
+
+Test Period :
+2024-10-19 → 2024-12-30
+
+Leakage Check Passed 
+
+## Final Deliverables
+
+* Chronological train-test split implemented
+* Train and test windows documented
+* Leakage validation completed
+* MinMaxScaler fitted on training data only
+* Scaled feature arrays generated
+* Scaler artifact saved for reuse
+* Train and test datasets exported
+* Modeling-ready arrays created
+
+This stage produces the final modeling datasets (`X_train`, `X_test`, `y_train`, `y_test`) while maintaining strict chronological separation between training and testing periods.
+
