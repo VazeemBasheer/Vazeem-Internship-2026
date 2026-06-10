@@ -79,28 +79,27 @@ The objective of ingest.py in a data project is usually to load raw data and pre
 rest of the workflow follows these steps
 
 Raw Sensor Data
-
-&#x20;      ↓
+      ↓
 
 ingest.py
 
-&#x20;      ↓
+      ↓
 
 01\_loaded.parquet
 
-&#x20;      ↓
+      ↓
 
 clean.py / preprocess.py
 
-&#x20;      ↓
+     ↓
 
 feature engineering
 
-&#x20;      ↓
+      ↓
 
 train.py
 
-&#x20;      ↓
+      ↓
 
 yield prediction model
 
@@ -119,6 +118,7 @@ This script performs data cleaning and preprocessing using several common techni
 1 Missing value analysis
 
 2 Range-based filtering (data validation)
+
 3 Null target removal
 
 4 Forward-fill imputation
@@ -139,21 +139,21 @@ This is a combination of:
 
 1 Data Validation Cleaning
 
-&#x20; Filters out out-of-range sensor readings.
+ Filters out out-of-range sensor readings.
 
 2 Missing Value Treatment
 
-&#x20; Forward-fill imputation for sensor data.
+ Forward-fill imputation for sensor data.
 
-&#x20; Row deletion for missing target values.
+ Row deletion for missing target values.
 
 3 Data Deduplication
 
-&#x20; Removes duplicate timestamps.
+ Removes duplicate timestamps.
 
 4 Quality-Based Filtering
 
-&#x20; Retains only records that satisfy predefined oyster polyhouse environmental conditions.
+ Retains only records that satisfy predefined oyster polyhouse environmental conditions.
 
 
 
@@ -319,7 +319,10 @@ Purpose:
 
 * Identify trends, patterns, and potential outliers.
 
-# # Feature Engineering & Scaling## -day7
+
+
+
+## Feature Engineering & Scaling ## -day7
 
 ## Objective
 
@@ -608,3 +611,97 @@ Leakage Check Passed
 
 This stage produces the final modeling datasets (`X_train`, `X_test`, `y_train`, `y_test`) while maintaining strict chronological separation between training and testing periods.
 
+## Chronological Train/Test Split
+
+### Objective
+
+To prepare the mushroom yield dataset for machine learning by creating a chronological train/test split while preventing data leakage.
+
+### Methodology
+
+1. Loaded the cleaned dataset from:
+
+   `data/interim/02_cleaned.parquet`
+
+2. Sorted records by timestamp.
+
+3. Applied an 80/20 chronological split:
+
+   * First 80% of records → Training set
+   * Last 20% of records → Test set
+
+4. Verified that no test record occurred before the training cutoff date.
+
+5. Applied MinMaxScaler:
+
+   * Fitted only on training data
+   * Applied to both training and test data
+
+### Features Used
+
+* temperature_c
+* humidity_pct
+* co2_ppm
+
+### Target Variable
+
+* yield_kg
+
+### Leakage Prevention
+
+The following assertion verifies that all test observations occur after the training period:
+
+`assert test_start_date > train_end_date`
+
+### Saved Artifacts
+
+#### Model Assets
+
+* models/minmax_scaler_train.joblib
+
+#### Processed Data
+
+* data/processed/train.csv
+* data/processed/test.csv
+
+#### NumPy Arrays
+
+* data/processed/X_train.npy
+* data/processed/X_test.npy
+* data/processed/y_train.npy
+* data/processed/y_test.npy
+
+### Output Information Logged
+
+The script logs:
+
+* Train and test row counts
+* Train period dates
+* Test period dates
+* Split cutoff date
+* Leakage validation status
+* X and y array shapes
+
+### Execution
+
+Run the script using:
+
+`python src/split_scale.py`
+
+### Timeline Diagram
+
+The chronological split can be visualized as:
+
+|------------------- Training Set (80%) -------------------|------ Test Set (20%) ------|
+
+2024-01-01                                            2024-10-18              2024-10-19                    2024-12-30
+                                                        ↑
+                                                   Split Cutoff
+
+This timeline illustrates the separation between training and test windows and confirms that future observations are not used during model training.
+
+### Seasonality Consideration
+
+Because the dataset is split chronologically, the test period represents future observations that the model has not seen during training. If the average value of `yield_kg` in the test period differs significantly from the training period, evaluation metrics may decrease. Such differences can occur due to seasonality, environmental changes, or shifts in growing conditions over time.
+
+This behavior is expected in real-world forecasting scenarios and does not indicate data leakage. Instead, it reflects the model's ability to generalize to future data under changing conditions.
