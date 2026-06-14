@@ -67,7 +67,15 @@ joblib.dump(
     MODELS / "minmax_scaler_train.joblib"
 )
 
-# Save train/test datasets
+print("\n===== DATA SPLIT SUMMARY =====")
+
+print(f"Total rows : {len(df)}")
+print(f"Train rows : {len(train)}")
+print(f"Test rows  : {len(test)}")
+
+print(
+    f"\nTrain Period : "
+    f"{train['timestamp'].min()} "# Save train/test datasets
 
 train.to_csv(
     PROCESSED / "train.csv",
@@ -89,15 +97,7 @@ np.save(PROCESSED / "y_test.npy", y_test)
 
 # Log split information
 
-print("\n===== DATA SPLIT SUMMARY =====")
 
-print(f"Total rows : {len(df)}")
-print(f"Train rows : {len(train)}")
-print(f"Test rows  : {len(test)}")
-
-print(
-    f"\nTrain Period : "
-    f"{train['timestamp'].min()} "
     f"→ "
     f"{train['timestamp'].max()}"
 )
