@@ -1338,7 +1338,7 @@ The tuned model achieved:
 
 All tuning was performed exclusively on training data, and the test set was evaluated only once after model selection. The resulting model, parameter configuration, and search logs were saved for reproducibility and mentor review.
 
-# Model Comparison and Champion Selection
+# ##Model Comparison and Champion Selection### --day14
 
 ## Objective
 
