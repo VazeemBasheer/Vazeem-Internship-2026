@@ -21,20 +21,21 @@ st.set_page_config(
 try:
     from src.predict import make_prediction
 
-except FileNotFoundError as e:
+except Exception as e:
     st.error(
         f"""
-        Model artifacts could not be loaded.
+        Application startup failed.
 
+        Error:
         {e}
 
-        Please verify:
+        Verify that:
 
-        - random_forest_tuned.joblib
-        - minmax_scaler_train.joblib
-        - feature_cols.json
-
-        exist inside the models folder.
+        - src/predict.py exists
+        - random_forest_tuned.joblib exists
+        - minmax_scaler_train.joblib exists
+        - feature_cols.json exists
+        - required packages are installed
         """
     )
     st.stop()
@@ -132,17 +133,17 @@ warnings = []
 
 if not (15 <= temperature <= 30):
     warnings.append(
-        "Temperature is outside the training range."
+        "Temperature is outside the training range. Predictions may be less reliable."
     )
 
 if not (60 <= humidity <= 95):
     warnings.append(
-        "Humidity is outside the training range."
+        "Humidity is outside the training range. Predictions may be less reliable."
     )
 
 if not (500 <= co2 <= 1500):
     warnings.append(
-        "CO₂ is outside the training range."
+        "CO₂ is outside the training range. Predictions may be less reliable."
     )
 
 for warning in warnings:
@@ -157,77 +158,85 @@ if st.button(
     use_container_width=True
 ):
 
-    with st.spinner(
-        "Generating forecast..."
-    ):
+    try:
 
-        prediction = predictor(
-            temperature=temperature,
-            humidity=humidity,
-            co2=co2
+        with st.spinner(
+            "Generating forecast..."
+        ):
+
+            prediction = predictor(
+                temperature=temperature,
+                humidity=humidity,
+                co2=co2
+            )
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+
+            st.metric(
+                "Estimated Yield",
+                f"{prediction:.2f} kg"
+            )
+
+        with col2:
+
+            st.metric(
+                "Humidity",
+                f"{humidity:.1f}%"
+            )
+
+        st.success(
+            "Prediction completed successfully."
         )
 
-    col1, col2 = st.columns(2)
+        # ==========================================
+        # Sensitivity Chart
+        # ==========================================
 
-    with col1:
-
-        st.metric(
-            "Estimated Yield",
-            f"{prediction:,.2f} kg"
+        st.subheader(
+            "What-if Analysis: Humidity Sensitivity"
         )
 
-    with col2:
-
-        st.metric(
-            "Humidity",
-            f"{humidity:,.1f}%"
-        )
-
-    st.success(
-        "Prediction completed successfully."
-    )
-
-    # ==========================================
-    # Sensitivity Chart
-    # ==========================================
-
-    st.subheader(
-        "What-if Analysis: Humidity Sensitivity"
-    )
-
-    st.markdown(
-        """
+        st.markdown(
+            """
 Shows how predicted yield changes when
 humidity varies while temperature and CO₂
 remain fixed.
 """
-    )
-
-    humidity_range = np.linspace(
-        60,
-        98,
-        39
-    )
-
-    predictions = [
-        predictor(
-            temperature=temperature,
-            humidity=h,
-            co2=co2
         )
-        for h in humidity_range
-    ]
 
-    chart_df = pd.DataFrame({
-        "Humidity (%)": humidity_range,
-        "Predicted Yield (kg)": predictions
-    })
+        humidity_range = np.linspace(
+            60,
+            98,
+            39
+        )
 
-    st.line_chart(
-        chart_df,
-        x="Humidity (%)",
-        y="Predicted Yield (kg)"
-    )
+        predictions = [
+            predictor(
+                temperature=temperature,
+                humidity=h,
+                co2=co2
+            )
+            for h in humidity_range
+        ]
+
+        chart_df = pd.DataFrame({
+            "Humidity (%)": humidity_range,
+            "Predicted Yield (kg)": predictions
+        })
+
+        st.line_chart(
+            chart_df,
+            x="Humidity (%)",
+            y="Predicted Yield (kg)"
+        )
+
+    except Exception as e:
+
+        st.error(
+            f"Prediction failed: {e}"
+        )
 
 # ==================================================
 # Model Information
