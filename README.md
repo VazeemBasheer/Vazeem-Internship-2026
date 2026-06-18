@@ -3,7 +3,11 @@
 zellbytes internship work
 
 
+## Live Demo
 
+🚀 Streamlit Application:
+
+https://vazeem-internship-2026-5yryfkqukyvqh9zgefpj7z.streamlit.app
 
 
 #mushroom-yield-project -day1

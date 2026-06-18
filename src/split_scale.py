@@ -75,7 +75,12 @@ print(f"Test rows  : {len(test)}")
 
 print(
     f"\nTrain Period : "
-    f"{train['timestamp'].min()} "# Save train/test datasets
+    f"{train['timestamp'].min()} "
+    f"-> "
+    f"{train['timestamp'].max()}"
+)
+
+# Save train/test datasets
 
 train.to_csv(
     PROCESSED / "train.csv",
@@ -97,15 +102,10 @@ np.save(PROCESSED / "y_test.npy", y_test)
 
 # Log split information
 
-
-    f"→ "
-    f"{train['timestamp'].max()}"
-)
-
 print(
     f"Test Period  : "
     f"{test['timestamp'].min()} "
-    f"→ "
+    f"-> "
     f"{test['timestamp'].max()}"
 )
 
@@ -113,7 +113,7 @@ print(
     f"\nCutoff Date : {train_end_date}"
 )
 
-print("\nLeakage Check Passed ✓")
+print("\nLeakage Check Passed")
 
 print("\nArray Shapes")
 print(f"X_train : {X_train.shape}")
